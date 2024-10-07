@@ -13,5 +13,4 @@ router
   .patch(user.update)
   .delete(user.delete);
 
-/* ------------------------------------------------------- */
 module.exports = router;
