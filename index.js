@@ -17,6 +17,9 @@ app.use(express.json());
 //Cors
 app.use(require("cors")());
 
+//Authentication:
+app.use(require('./src/middlewares/authentication'))
+
 // Routes:
 app.use(require('./src/routes'))
 
