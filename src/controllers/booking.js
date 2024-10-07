@@ -26,7 +26,6 @@ module.exports = {
   
         return date >= start && date <= end && availability.isAvailable;
       });
-  console.log(isAvailable);
       if (!isAvailable) {
         return res
           .status(400)

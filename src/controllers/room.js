@@ -1,6 +1,8 @@
 "use strict";
 
 const Room = require("../models/room");
+const Booking = require("../models/booking");
+
 
 module.exports = {
   list: async (req, res) => {
@@ -49,28 +51,42 @@ module.exports = {
     });
   },
   getAvailableRooms: async (req, res) => {
-    const { date,type } = req.query;
-
-    if (!date) {
-      return res.status(400).json({ message: "Date is required" });
+    const { startDate, endDate, type } = req.query;
+  
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: "Start date and end date are required" });
     }
-
-    const targetDate = new Date(date);
-
-    const query = {
-        availability: { $elemMatch: { date: targetDate, isAvailable: true } },
-      };
-    
+  
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+  
+      const bookedRooms = await Booking.find({
+        $or: [
+          { startDate: { $lte: end }, endDate: { $gte: start } }
+        ]
+      }).select("room");
+  
+      const bookedRoomIds = bookedRooms.map((booking) => booking.room.toString());
+  
+      const query = { _id: { $nin: bookedRoomIds } };
+  
       if (type) {
-        query.type = type; 
+        query.type = type;
       }
-    
+  
       const availableRooms = await Room.find(query);
-
-    res.status(200).json({
-      message: "Available rooms fetched successfully",
-      data: availableRooms,
-    });
+  
+      return res.status(200).json({
+        message: "Available rooms fetched successfully",
+        data: availableRooms,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occurred while fetching available rooms",
+        error: error.message,
+      });
+    }
   },
   updateRoomAvailability: async (req, res) => {
     const { date, isAvailable } = req.body;
