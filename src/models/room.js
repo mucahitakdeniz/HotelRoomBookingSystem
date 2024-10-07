@@ -31,7 +31,7 @@ const roomSchema = new mongoose.Schema(
       },
     ],
   },
-  { collection: "users", timestamps: true }
+  { collection: "rooms", timestamps: true }
 );
 
 module.exports = mongoose.model("Room", roomSchema);
