@@ -49,7 +49,7 @@ module.exports = {
     });
   },
   getAvailableRooms: async (req, res) => {
-    const { date } = req.query;
+    const { date,type } = req.query;
 
     if (!date) {
       return res.status(400).json({ message: "Date is required" });
@@ -57,9 +57,15 @@ module.exports = {
 
     const targetDate = new Date(date);
 
-    const availableRooms = await Room.find({
-      availability: { $elemMatch: { date: targetDate, isAvailable: true } },
-    });
+    const query = {
+        availability: { $elemMatch: { date: targetDate, isAvailable: true } },
+      };
+    
+      if (type) {
+        query.type = type; 
+      }
+    
+      const availableRooms = await Room.find(query);
 
     res.status(200).json({
       message: "Available rooms fetched successfully",

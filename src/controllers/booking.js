@@ -11,46 +11,51 @@ module.exports = {
   },
 
   create: async (req, res) => {
-    const roomDetails = await Room.findById(req.body.room);
-    if (!roomDetails) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
-    const isAvailable = roomDetails.availability.some((availability) => {
-      const date = new Date(availability.date).getTime();
-      const start = new Date(startDate).getTime();
-      const end = new Date(endDate).getTime();
-
-      return date >= start && date <= end && availability.isAvailable;
-    });
-
-    if (!isAvailable) {
-      return res
-        .status(400)
-        .json({ message: "Room is not available for the selected dates" });
-    }
-
-    const data = await Booking.create(req.body);
-
-    roomDetails.availability = roomDetails.availability.map((availability) => {
-      const date = new Date(availability.date).getTime();
-      const start = new Date(startDate).getTime();
-      const end = new Date(endDate).getTime();
-
-      if (date >= start && date <= end) {
-        return { ...availability, isAvailable: false };
+   
+      const { room, startDate, endDate } = req.body; 
+  
+      const roomDetails = await Room.findById(room);
+      if (!roomDetails) {
+        return res.status(404).json({ message: "Room not found" });
       }
-      return availability;
-    });
-
-    await roomDetails.save();
-
-    res.status(201).send({
-      error: false,
-      message: "Booking created successfully",
-      data,
-    });
-  },
+  
+      const isAvailable = roomDetails.availability.some((availability) => {
+        const date = new Date(availability.date).getTime();
+        const start = new Date(startDate).getTime();
+        const end = new Date(endDate).getTime();
+  
+        return date >= start && date <= end && availability.isAvailable;
+      });
+  console.log(isAvailable);
+      if (!isAvailable) {
+        return res
+          .status(400)
+          .json({ message: "Room is not available for the selected dates" });
+      }
+  
+      const data = await Booking.create(req.body);
+  
+      roomDetails.availability = roomDetails.availability.map((availability) => {
+        const date = new Date(availability.date).getTime();
+        const start = new Date(startDate).getTime();
+        const end = new Date(endDate).getTime();
+  
+        if (date >= start && date <= end) {
+          return { ...availability, isAvailable: false };
+        }
+        return availability;
+      });
+  
+      await roomDetails.save();
+  
+      res.status(201).send({
+        error: false,
+        message: "Booking created successfully",
+        data,
+      });
+    
+  }
+  ,
 
   read: async (req, res) => {
     const data = await Booking.findOne({ _id: req.params.id });
