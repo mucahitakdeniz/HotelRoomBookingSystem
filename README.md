@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 HotelRoomBookingSystem/
     ├── index.js               # Main server file
     ├── src/
@@ -27,3 +28,6 @@ HotelRoomBookingSystem/
     ├── .gitignore             # Ignored files and directories
     ├── package.json           # Project dependencies and scripts
     └── README.md              # Project documentation
+=======
+
+>>>>>>> a2a6f37a6b377f060a7777713a85ba119a4b566d
