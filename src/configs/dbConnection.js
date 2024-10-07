@@ -10,7 +10,4 @@ const dbConnection = function () {
     })
     .catch((err) => console.log("* DB Not Connected * ", err));
 };
-module.exports = {
-  mongoose,
-  dbConnection,
-};
+module.exports = dbConnection;
